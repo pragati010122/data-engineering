@@ -16,6 +16,7 @@ finally:
 cs.close()
 cnn.close()
 
+#create database and schema
 import snowflake.connector
 cnn = snowflake.connector.connect(
         user='SAIPRIYA',
@@ -43,3 +44,48 @@ try:
 finally:
     cs.close()
 cnn.close()
+
+#data ingestion
+import snowflake.connector
+from snowflake.connector.pandas_tools import write_pandas
+import pandas as pd
+
+print('opening..')
+df = pd.read_csv("C:/Users/SaiMandapati/Downloads/energy_dataset.csv", sep=',', header=0, index_col=False)
+df.reset_index(drop=True, inplace=True)
+print(df.head(10))
+print('opening snowflake..')
+cnn = snowflake.connector.connect(
+     user='SAIPRIYA',
+     password='Priya@123',
+     account='kw25469.ap-south-1.aws',
+     warehouse='project_warehouse',
+     database='project_database',
+     schema='project_schema'
+    )
+success, nchunks, nrows, _ = write_pandas(cnn, df, 'PROJECT_TABLE1', quote_identifiers=True)
+print(str(success) + ',' + str(nchunks) + ',' + str(nrows))
+cnn.close()
+print('done.')
+
+import snowflake.connector
+from snowflake.connector.pandas_tools import write_pandas
+import pandas as pd
+
+print('opening..')
+df = pd.read_csv("C:/Users/SaiMandapati/Downloads/weather_features.csv", sep=',', header=0, index_col=False)
+df.reset_index(drop=True, inplace=True)
+print(df.head(10))
+print('opening snowflake..')
+cnn = snowflake.connector.connect(
+     user='SAIPRIYA',
+     password='Priya@123',
+     account='kw25469.ap-south-1.aws',
+     warehouse='project_warehouse',
+     database='project_database',
+     schema='project_schema'
+    )
+success, nchunks, nrows, _ = write_pandas(cnn, df, 'PROJECT_TABLE2', quote_identifiers=False)
+print(str(success) + ',' + str(nchunks) + ',' + str(nrows))
+cnn.close()
+print('done.')
